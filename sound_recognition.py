@@ -1,15 +1,16 @@
 import speech_recognition as sr
-import google.generativeai as genai
+import google.generativeai as genai #改openai
 import configparser
 import re
 import json
 
-# 創建 ConfigParser 對象
+# 創建 ConfigParser 對象(api key會放在config裡避免直接取用，這個部分你們可能要改成openai)
 config = configparser.ConfigParser()
 config.read('config.ini')
 GOOGLE_API_KEY = config['API']['api_key']
 genai.configure(api_key=GOOGLE_API_KEY)
 
+# 把LLM產稱的內容格式化後產生json檔到指定路徑
 def extract_and_dump_json(sample_text, output_file_path):
     pattern = r"```json(.*?)```"
     json_part = re.search(pattern, sample_text, re.DOTALL)
@@ -27,11 +28,11 @@ def extract_and_dump_json(sample_text, output_file_path):
         return output_file_path
     else:
         return None
-
+# 呼叫LLM 產生內容
 def generate_json(instruction):
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash') #要改成openai
     
-    # Prepare the prompt
+    # Prepare the prompt(改這個部分可以產生你們想要的json檔)
     prompt = f"""instruction : {instruction}
 
     Please understand the equipment and the order in this instruction, and convert them into the following JSON schema:
